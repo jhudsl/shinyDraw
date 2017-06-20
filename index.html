@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+
+<div>
+  <h1> hi </h1>
+</div>
+<div id = "viz"></div>
+
+<style>
+  svg{
+  	overflow: visible;
+  }
+
+  body{
+    font-family: monospace;
+    margin: 0px;
+    overflow: hidden;
+  }
+
+  .axis{
+    opacity: .5;
+  }
+
+  .line{
+    fill: none;
+    stroke: black;
+    stroke-width: 3;
+  }
+
+  .area{
+    fill: #eee;
+  }
+
+  .your-line{
+    stroke: #f0f;
+    stroke-width: 3;
+    stroke-dasharray: 5 5;
+  }
+</style>
+<script src='dist/bundle.js'></script>
