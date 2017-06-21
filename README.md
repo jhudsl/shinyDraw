@@ -20,21 +20,17 @@ This should give you a nice and usable demo to play with.
 
 ## Editing it yourself.
 
-__code version__
+__Bash Commands__
 
 ```bash
 git clone git@github.com:jhudsl/shinyDraw.git
 cd ShinyDraw
 npm install #this takes too long because javascript's package landscape is a bloated giant.
+open demo/index.html
 npm start   #kick off a server that automagically "transpiles" your javascript code into code that runs on any browser.
 ```
-__human version__   
 
-In order to run the demo on your own computer clone this repo then `cd` into it and run the command `npm install`.
-This will take a ridiculous amount of time but once it's done you can then run `npm start` and magically a server will
-spin up that points to the port `9966`. Just point your browser to `localhost:9966` and the demo should show up.
-
-## Making changes.
-
-If you want to tinker with the code (it's entirely in `src/main.js` and `src/helpers.js`) just open them up in your text editor of choice and make a change then save the file (make sure you've previously run `npm start`). After saving these the server will
-detect changes to your files and recompile them and host the new version. Refresh your page and see what's newly broken!
+This should open up your browser to a test page. Notice how your terminal is now not working? That's because it's
+sitting watching for any changes that are made to `src/main.js` which is the final point of our package. You can now
+change something in this file then save it and your terminal will show you it has re-transpiled all your code and spit out
+a new javascript bundle to `demo/youDrawIt.js`. Once you have gotten it to do what you desire,  kill your node watcher with `ctrl + c` and then run `npm run build` and it will generate the javascript bundle again and put it into the `dist/` directory, ready for easy consumption.
