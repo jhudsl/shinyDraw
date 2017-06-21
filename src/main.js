@@ -95,11 +95,14 @@ class drawIt{
       .on('drag', function(){
         const pos   = d3.mouse(this);
         const x_max = scales.x.domain()[1];
+        //have to start user defined drawing one point after drawstart so that line is connected.
+        const start_index = usersData.map(d=>d.x).indexOf(draw_start) + 1;
+        const start_x = usersData[start_index].x;
 
         //append drag point to closest point on x axis in the in data.
         addToClosest({
           usersData,
-          x_pos: clamp(draw_start + 1, x_max, scales.x.invert(pos[0])),
+          x_pos: clamp(start_x, x_max, scales.x.invert(pos[0])),
           y_pos: clamp(0, scales.y.domain()[1], scales.y.invert(pos[1]))
         })
 
