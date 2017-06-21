@@ -9,6 +9,17 @@ duct taped into a shiny module. Most likely will end up in the `shinysense` pack
 
 ## Running it yourself.
 
+```bash
+git clone git@github.com:jhudsl/shinyDraw.git
+cd ShinyDraw/demo
+open index.html
+```
+
+This should give you a nice and usable demo to play with.
+
+
+## Editing it yourself.
+
 __code version__
 
 ```bash

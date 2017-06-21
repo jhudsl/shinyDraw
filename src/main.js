@@ -15,33 +15,6 @@ const {
   drawStartValue
 } = require('./helpers');
 
-var data = [
-  {"year": 2001, "debt": 31.4},
-  {"year": 2002, "debt": 32.6},
-  {"year": 2003, "debt": 34.5},
-  {"year": 2004, "debt": 35.5},
-  {"year": 2005, "debt": 35.6},
-  {"year": 2006, "debt": 35.3},
-  {"year": 2007, "debt": 35.2},
-  {"year": 2008, "debt": 39.3},
-  {"year": 2009, "debt": 52.3},
-  {"year": 2010, "debt": 60.9},
-  {"year": 2011, "debt": 65.9},
-  {"year": 2012, "debt": 70.4},
-  {"year": 2013, "debt": 72.6},
-  {"year": 2014, "debt": 74.4},
-  {"year": 2015, "debt": 73.6},
-]
-
-const params = {
-  data: data,
-  dom_target: "#viz",
-  x_key: "year",
-  y_key: "debt",
-  y_max: 80,
-  reveal_extent: 2008 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
-}
-
 class drawIt{
   constructor(params){
     const {
@@ -52,6 +25,7 @@ class drawIt{
       y_max,
       reveal_extent,
       total_height = 400,
+      on_done_drawing = ( d => console.table(d) )
     } = params;
 
     const sel  = d3.select(dom_target).html(''),
@@ -117,8 +91,7 @@ class drawIt{
         }
       })
       .on('end',function(){
-        console.log("The user dragged these values. Sending to shiny")
-        console.table(usersData)
+        on_done_drawing(usersData);
       })
 
     const dragger  = makeDragger({scales,reveal_extent});
@@ -126,4 +99,5 @@ class drawIt{
   }
 }
 
-const ourChart = new drawIt(params);
+module.exports = drawIt;
+// const ourChart = new drawIt(params);
