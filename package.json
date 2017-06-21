@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "watchify src/main.js src/main.js --standalone youDrawIt -o demo/youDrawIt.js -v",
-    "build": "browserify src/main.js --standalone youDrawIt > dist/youDrawIt.js",
+    "start": "watchify src/main.js src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt -o demo/youDrawIt.js -v",
+    "build": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt > dist/youDrawIt.js",
     "buildMin": "browserify src/main.js --standalone youDrawIt | uglifyjs -cm > dist/youDrawIt.min.js"
   },
   "author": "Nick Strayer <nick.strayer@gmail.com> (http://nickstrayer.me)",

@@ -16968,7 +16968,6 @@ var addToClosest = function addToClosest(_ref9) {
       x_pos = _ref9.x_pos,
       y_pos = _ref9.y_pos;
 
-
   //make array of distance from drag xposition to x position in data
   //then find the index in that array that is the min. This is the closest point in our data.
   var closest_index = usersData.map(function (d) {
@@ -17010,7 +17009,11 @@ module.exports = {
 },{"d3":1}],3:[function(require,module,exports){
 'use strict';
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
 var d3 = require('d3');
 
@@ -17044,7 +17047,6 @@ var drawIt = function drawIt(params) {
     return console.table(d);
   } : _params$on_done_drawi;
 
-
   var sel = d3.select(dom_target).html(''),
       data = simplifyData({ fullData: fullData, x_key: x_key, y_key: y_key }),
       margin = { left: 50, right: 50, top: 30, bottom: 30 },
@@ -17070,10 +17072,10 @@ var drawIt = function drawIt(params) {
   trueLine.append('path').attr("d", line(data)).style("stroke", "black").style("stroke-width", 3).style("fill", "none");
 
   //plot the axes
-  drawAxes({ svg: svg, scales: scales, height: height }
+  drawAxes({ svg: svg, scales: scales, height: height
 
-  //define the logic on user drag on the chart.
-  );var makeDragger = function makeDragger(_ref) {
+    //define the logic on user drag on the chart.
+  });var makeDragger = function makeDragger(_ref) {
     var scales = _ref.scales,
         reveal_extent = _ref.reveal_extent;
     return d3.drag().on('drag', function () {
@@ -17088,15 +17090,14 @@ var drawIt = function drawIt(params) {
         usersData: usersData,
         x_pos: clamp(drawStart, x_max, scales.x.invert(pos[0])),
         y_pos: clamp(0, y_max, scales.y.invert(pos[1]))
-      }
 
-      //update the user's drawn line with the new data.
-      );userLine.attr('d', line.defined(function (d) {
+        //update the user's drawn line with the new data.
+      });userLine.attr('d', line.defined(function (d) {
         return d.defined;
-      })(usersData)
+      })(usersData
 
       //if we've drawn for all the hidden datapoints, reveal them.
-      );if (d3.mean(usersData, function (d) {
+      ));if (d3.mean(usersData, function (d) {
         return d.defined;
       }) === 1) {
         clipRect.transition().duration(1000).attr('width', scales.x(x_max));
