@@ -37,7 +37,7 @@ const params = {
   x_key: "year",
   y_key: "debt",
   y_max: 80,
-  draw_start: 2008
+  draw_start: 2008 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
 }
 
 class drawIt{
@@ -51,7 +51,7 @@ class drawIt{
       draw_start,
       total_height = 400,
     } = params;
-    console.log(fullData)
+
     const sel  = d3.select(dom_target).html(''),
       data     = simplifyData({fullData, x_key, y_key}),
       margin   = {left: 50, right: 50, top: 30, bottom: 30},
@@ -66,10 +66,12 @@ class drawIt{
     //user's drawn data
     const userLine = svg
       .append('path')
-      .attr('class', 'user-line')
+      .style("stroke", "#f0f")
+      .style("stroke-width", 3)
+      .style("stroke-dasharray", "5 5")
 
     let usersData = makeUserData({data, draw_start});
-    console.log(usersData)
+
     //background for d3 drag to work on.
     const background = dragCanvas({svg, width,height});
 
@@ -87,9 +89,9 @@ class drawIt{
 
     const makeDragger = ({scales,draw_start}) => d3.drag()
       .on('drag', function(){
-        const pos = d3.mouse(this)
+        const pos   = d3.mouse(this)
         const x_max = scales.x.domain()[1];
-        const x_pos = clamp(draw_start, x_max, scales.x.invert(pos[0]))
+        const x_pos = clamp(draw_start + 1, x_max, scales.x.invert(pos[0]))
         const y_pos = clamp(0, scales.y.domain()[1], scales.y.invert(pos[1]))
 
         usersData.forEach(d => {
@@ -99,22 +101,21 @@ class drawIt{
           }
         })
 
-        // console.log(`x:${x_pos}, y:${y_pos}`)
-        console.log(usersData)
         userLine
           .attr('d', line.defined(d => d.defined)(usersData))
 
-        // if (!completed && d3.mean(yourData, ƒ('defined')) == 1){
-        //   completed = true
-        //   clipRect.transition().duration(1000).attr('width', c.x(2015))
-        // }
+        if (d3.mean(usersData, d => d.defined) === 1){
+          clipRect.transition().duration(1000).attr('width', scales.x(x_max))
+        }
+      })
+      .on('end',function(){
+        console.log("The user dragged these values. Sending to shiny")
+        console.table(usersData)
       })
 
     const dragger  = makeDragger({scales,draw_start});
     svg.call(dragger)
   }
-
-
 }
 
 const ourChart = new drawIt(params);
