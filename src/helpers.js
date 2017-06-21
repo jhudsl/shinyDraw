@@ -38,23 +38,23 @@ const makeLine = ({scales}) => d3.area()
   .x(d => scales.x(d.x))
   .y(d => scales.y(d.y));
 
-const makeClip = ({svg, scales, draw_start, height}) => svg
+const makeClip = ({svg, scales, reveal_extent, height}) => svg
   .append('clipPath')
   .attr("id", "clip")
   .append('rect')
-    .attr("width", scales.x(draw_start) - 2)
+    .attr("width", scales.x(reveal_extent) - 2)
     .attr("height", height);
 
 
 const clamp = (a, b, c) => Math.max(a, Math.min(b, c))
 
-const makeUserData = ({data, draw_start}) => data
+const makeUserData = ({data, reveal_extent}) => data
   .map( d => ( {
     x: d.x,
     y: d.y,
-    defined: d.x == draw_start
+    defined: d.x == reveal_extent
   } ) )
-  .filter( d => d.x >= draw_start)
+  .filter( d => d.x >= reveal_extent)
 
 //append invisible rectangle covering plot so d3drag can see what's going on
 const dragCanvas = ({svg, width, height}) => svg
@@ -73,9 +73,15 @@ const addToClosest = ({usersData, x_pos, y_pos}) => {
     .map(d => Math.abs(d.x - x_pos))
     .reduce((min_index, cur_val, cur_index, arr) => cur_val < arr[min_index] ? cur_index : min_index, 0);
 
-  //update user data info. The functional programmer in me is weeping at this, but it's way faster. 
+  //update user data info. The functional programmer in me is weeping at this, but it's way faster.
   usersData[closest_index].y = y_pos
   usersData[closest_index].defined = true
+}
+
+//have to start user defined drawing one point after drawstart so that line is connected.
+const drawStartValue = ({usersData, reveal_extent}) => {
+  const start_index = usersData.map(d => d.x).indexOf(reveal_extent) + 1;
+  return usersData[start_index].x;
 }
 
 module.exports = {
@@ -88,5 +94,6 @@ module.exports = {
   makeUserData,
   dragCanvas,
   clamp,
-  addToClosest
+  addToClosest,
+  drawStartValue
 }

@@ -11,7 +11,8 @@ const {
   dragCanvas,
   makeUserData,
   clamp,
-  addToClosest
+  addToClosest,
+  drawStartValue
 } = require('./helpers');
 
 var data = [
@@ -38,7 +39,7 @@ const params = {
   x_key: "year",
   y_key: "debt",
   y_max: 80,
-  draw_start: 2008 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
+  reveal_extent: 2008 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
 }
 
 class drawIt{
@@ -49,7 +50,7 @@ class drawIt{
       x_key,
       y_key,
       y_max,
-      draw_start,
+      reveal_extent,
       total_height = 400,
     } = params;
 
@@ -60,17 +61,18 @@ class drawIt{
       height   = total_height - margin.top - margin.bottom,
       svg      = appendSVG({sel, height, width, margin}),
       scales   = makeScales({data, y_max,height, width, margin}),
+      x_max    = scales.x.domain()[1],
       line     = makeLine({scales}),
-      clipRect = makeClip({svg, scales, draw_start, height});
+      clipRect = makeClip({svg, scales, reveal_extent, height});
 
     //user's drawn data
     const userLine = svg
       .append('path')
-      .style("stroke", "#f0f")
+      .style("stroke", "steelblue")
       .style("stroke-width", 3)
       .style("stroke-dasharray", "5 5")
 
-    let usersData = makeUserData({data, draw_start});
+    let usersData = makeUserData({data, reveal_extent});
 
     //background for d3 drag to work on.
     const background = dragCanvas({svg, width,height});
@@ -91,19 +93,19 @@ class drawIt{
     drawAxes({svg, scales, height})
 
     //define the logic on user drag on the chart.
-    const makeDragger = ({scales,draw_start}) => d3.drag()
+    const makeDragger = ({scales,reveal_extent}) => d3.drag()
       .on('drag', function(){
-        const pos   = d3.mouse(this);
-        const x_max = scales.x.domain()[1];
-        //have to start user defined drawing one point after drawstart so that line is connected.
-        const start_index = usersData.map(d=>d.x).indexOf(draw_start) + 1;
-        const start_x = usersData[start_index].x;
+        const pos = d3.mouse(this);          //current drag position
+        const drawStart = drawStartValue({   //find the x value that we can start appending values at.
+          usersData,
+          reveal_extent
+        });
 
         //append drag point to closest point on x axis in the in data.
         addToClosest({
           usersData,
-          x_pos: clamp(start_x, x_max, scales.x.invert(pos[0])),
-          y_pos: clamp(0, scales.y.domain()[1], scales.y.invert(pos[1]))
+          x_pos: clamp(drawStart, x_max, scales.x.invert(pos[0])),
+          y_pos: clamp(        0, y_max, scales.y.invert(pos[1]))
         })
 
         //update the user's drawn line with the new data.
@@ -119,7 +121,7 @@ class drawIt{
         console.table(usersData)
       })
 
-    const dragger  = makeDragger({scales,draw_start});
+    const dragger  = makeDragger({scales,reveal_extent});
     svg.call(dragger)
   }
 }
