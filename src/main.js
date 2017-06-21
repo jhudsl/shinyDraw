@@ -10,7 +10,8 @@ const {
   drawAxes,
   dragCanvas,
   makeUserData,
-  clamp
+  clamp,
+  addToClosest
 } = require('./helpers');
 
 var data = [
@@ -62,7 +63,6 @@ class drawIt{
       line     = makeLine({scales}),
       clipRect = makeClip({svg, scales, draw_start, height});
 
-
     //user's drawn data
     const userLine = svg
       .append('path')
@@ -75,35 +75,38 @@ class drawIt{
     //background for d3 drag to work on.
     const background = dragCanvas({svg, width,height});
 
-    const correctSel = svg
+    const trueLine = svg
       .append('g')
       .attr('clip-path', 'url(#clip)');
 
-    //line from data.
-    correctSel
+    //The data's true line.
+    trueLine
       .append('path')
-      .attr("class", "line")
-      .attr("d", line(data));
+      .attr("d", line(data))
+      .style("stroke", "black")
+      .style("stroke-width", 3)
+      .style("fill", "none");
 
+    //plot the axes
     drawAxes({svg, scales, height})
 
+    //define the logic on user drag on the chart.
     const makeDragger = ({scales,draw_start}) => d3.drag()
       .on('drag', function(){
-        const pos   = d3.mouse(this)
+        const pos   = d3.mouse(this);
         const x_max = scales.x.domain()[1];
-        const x_pos = clamp(draw_start + 1, x_max, scales.x.invert(pos[0]))
-        const y_pos = clamp(0, scales.y.domain()[1], scales.y.invert(pos[1]))
 
-        usersData.forEach(d => {
-          if (Math.abs(d.x - x_pos) < .5){
-            d.y = y_pos
-            d.defined = true
-          }
+        //append drag point to closest point on x axis in the in data.
+        addToClosest({
+          usersData,
+          x_pos: clamp(draw_start + 1, x_max, scales.x.invert(pos[0])),
+          y_pos: clamp(0, scales.y.domain()[1], scales.y.invert(pos[1]))
         })
 
-        userLine
-          .attr('d', line.defined(d => d.defined)(usersData))
+        //update the user's drawn line with the new data.
+        userLine.attr('d', line.defined(d => d.defined)(usersData))
 
+        //if we've drawn for all the hidden datapoints, reveal them.
         if (d3.mean(usersData, d => d.defined) === 1){
           clipRect.transition().duration(1000).attr('width', scales.x(x_max))
         }

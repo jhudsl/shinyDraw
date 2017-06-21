@@ -63,6 +63,21 @@ const dragCanvas = ({svg, width, height}) => svg
   .attr("height", height)
   .attr("opacity", 0);
 
+//takes user's current data and also the drag positions and returns a new userdata object with
+//the closest point on the x-axis to the drag position changed to the drag position's y value.
+const addToClosest = ({usersData, x_pos, y_pos}) => {
+
+  //make array of distance from drag xposition to x position in data
+  //then find the index in that array that is the min. This is the closest point in our data.
+  const closest_index = usersData
+    .map(d => Math.abs(d.x - x_pos))
+    .reduce((min_index, cur_val, cur_index, arr) => cur_val < arr[min_index] ? cur_index : min_index, 0);
+
+  //update user data info. The functional programmer in me is weeping at this, but it's way faster. 
+  usersData[closest_index].y = y_pos
+  usersData[closest_index].defined = true
+}
+
 module.exports = {
   simplifyData,
   appendSVG,
@@ -72,5 +87,6 @@ module.exports = {
   drawAxes,
   makeUserData,
   dragCanvas,
-  clamp
+  clamp,
+  addToClosest
 }
