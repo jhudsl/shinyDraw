@@ -16891,7 +16891,7 @@ var appendSVG = function appendSVG(_ref2) {
 
 var makeScales = function makeScales(_ref3) {
   var data = _ref3.data,
-      y_max = _ref3.y_max,
+      y_domain = _ref3.y_domain,
       height = _ref3.height,
       width = _ref3.width;
 
@@ -16899,9 +16899,7 @@ var makeScales = function makeScales(_ref3) {
     return d.x;
   })).range([0, width]);
 
-  var y = d3.scaleLinear().domain([d3.min(data, function (d) {
-    return d.y;
-  }), y_max]).range([height, 0]);
+  var y = d3.scaleLinear().domain(y_domain).range([height, 0]);
 
   return { x: x, y: y };
 };
@@ -16984,9 +16982,12 @@ var addToClosest = function addToClosest(_ref9) {
 //have to start user defined drawing one point after drawstart so that line is connected.
 var drawStartValue = function drawStartValue(_ref10) {
   var usersData = _ref10.usersData,
-      reveal_extent = _ref10.reveal_extent;
+      reveal_extent = _ref10.reveal_extent,
+      raw_draw = _ref10.raw_draw;
 
-  var start_index = usersData.map(function (d) {
+  var start_index = raw_draw ? usersData.map(function (d) {
+    return d.x;
+  }).indexOf(reveal_extent) : usersData.map(function (d) {
     return d.x;
   }).indexOf(reveal_extent) + 1;
   return usersData[start_index].x;
@@ -17008,6 +17009,32 @@ module.exports = {
 
 },{"d3":1}],3:[function(require,module,exports){
 'use strict';
+
+var _slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;_e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }return _arr;
+  }return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -17038,22 +17065,26 @@ var drawIt = function drawIt(params) {
       dom_target = params.dom_target,
       x_key = params.x_key,
       y_key = params.y_key,
-      y_max = params.y_max,
+      y_domain = params.y_domain,
       reveal_extent = params.reveal_extent,
       _params$total_height = params.total_height,
       total_height = _params$total_height === undefined ? 400 : _params$total_height,
+      _params$raw_draw = params.raw_draw,
+      raw_draw = _params$raw_draw === undefined ? false : _params$raw_draw,
       _params$on_done_drawi = params.on_done_drawing,
       on_done_drawing = _params$on_done_drawi === undefined ? function (d) {
     return console.table(d);
   } : _params$on_done_drawi;
-
   var sel = d3.select(dom_target).html(''),
       data = simplifyData({ fullData: fullData, x_key: x_key, y_key: y_key }),
       margin = { left: 50, right: 50, top: 30, bottom: 30 },
       width = sel.node().offsetWidth - margin.left - margin.right,
       height = total_height - margin.top - margin.bottom,
       svg = appendSVG({ sel: sel, height: height, width: width, margin: margin }),
-      scales = makeScales({ data: data, y_max: y_max, height: height, width: width, margin: margin }),
+      _y_domain = _slicedToArray(y_domain, 2),
+      y_min = _y_domain[0],
+      y_max = _y_domain[1],
+      scales = makeScales({ data: data, y_domain: y_domain, height: height, width: width, margin: margin }),
       x_max = scales.x.domain()[1],
       line = makeLine({ scales: scales }),
       clipRect = makeClip({ svg: svg, scales: scales, reveal_extent: reveal_extent, height: height });
@@ -17068,28 +17099,34 @@ var drawIt = function drawIt(params) {
 
   var trueLine = svg.append('g').attr('clip-path', 'url(#clip)');
 
-  //The data's true line.
-  trueLine.append('path').attr("d", line(data)).style("stroke", "black").style("stroke-width", 3).style("fill", "none");
+  if (!raw_draw) {
+    //Draw the data's true line.
+    trueLine.append('path').attr("d", line(data)).style("stroke", "black").style("stroke-width", 3).style("fill", "none");
+  }
 
   //plot the axes
   drawAxes({ svg: svg, scales: scales, height: height
 
     //define the logic on user drag on the chart.
+
   });var makeDragger = function makeDragger(_ref) {
     var scales = _ref.scales,
-        reveal_extent = _ref.reveal_extent;
+        reveal_extent = _ref.reveal_extent,
+        raw_draw = _ref.raw_draw;
     return d3.drag().on('drag', function () {
+
       var pos = d3.mouse(this); //current drag position
       var drawStart = drawStartValue({ //find the x value that we can start appending values at.
         usersData: usersData,
-        reveal_extent: reveal_extent
+        reveal_extent: reveal_extent,
+        raw_draw: raw_draw
       });
 
       //append drag point to closest point on x axis in the in data.
       addToClosest({
         usersData: usersData,
         x_pos: clamp(drawStart, x_max, scales.x.invert(pos[0])),
-        y_pos: clamp(0, y_max, scales.y.invert(pos[1]))
+        y_pos: clamp(y_min, y_max, scales.y.invert(pos[1]))
 
         //update the user's drawn line with the new data.
       });userLine.attr('d', line.defined(function (d) {
@@ -17099,7 +17136,7 @@ var drawIt = function drawIt(params) {
       //if we've drawn for all the hidden datapoints, reveal them.
       ));if (d3.mean(usersData, function (d) {
         return d.defined;
-      }) === 1) {
+      }) === 1 && !this.raw_draw) {
         clipRect.transition().duration(1000).attr('width', scales.x(x_max));
       }
     }).on('end', function () {
@@ -17107,7 +17144,7 @@ var drawIt = function drawIt(params) {
     });
   };
 
-  var dragger = makeDragger({ scales: scales, reveal_extent: reveal_extent });
+  var dragger = makeDragger({ scales: scales, reveal_extent: reveal_extent, raw_draw: raw_draw });
   svg.call(dragger);
 };
 

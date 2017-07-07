@@ -51,8 +51,9 @@ const params = {
   on_done_drawing: finishedDragging,
   x_key: "year",
   y_key: "debt",
-  y_max: 80,
-  reveal_extent: 2008 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
+  y_domain: [0,80],
+  raw_draw: true,
+  reveal_extent: 2001 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
 }
 
 

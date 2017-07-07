@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "watchify src/main.js src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt -o demo/youDrawIt.js -v",
+    "RDev": "watchify src/main.js src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt -o /Users/nick/rpackages/shinysense/inst/js/libraries/youDrawIt.js -v",
     "build": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt > dist/youDrawIt.js",
     "buildMin": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt | uglifyjs -cm > dist/youDrawIt.min.js"
   },

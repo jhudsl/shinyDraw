@@ -11,13 +11,13 @@ const appendSVG = ({sel, height, width, margin}) => sel
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-const makeScales = ({data, y_max, height, width}) => {
+const makeScales = ({data, y_domain, height, width}) => {
   const x = d3.scaleLinear()
     .domain(d3.extent(data, d => d.x))
     .range([0, width]);
 
   const y = d3.scaleLinear()
-    .domain([d3.min(data, d => d.y), y_max])
+    .domain(y_domain)
     .range([height, 0])
 
   return {x,y}
@@ -79,8 +79,9 @@ const addToClosest = ({usersData, x_pos, y_pos}) => {
 }
 
 //have to start user defined drawing one point after drawstart so that line is connected.
-const drawStartValue = ({usersData, reveal_extent}) => {
-  const start_index = usersData.map(d => d.x).indexOf(reveal_extent) + 1;
+const drawStartValue = ({usersData, reveal_extent, raw_draw}) => {
+  const start_index = raw_draw? usersData.map(d => d.x).indexOf(reveal_extent)    :
+                                usersData.map(d => d.x).indexOf(reveal_extent) + 1;
   return usersData[start_index].x;
 }
 
