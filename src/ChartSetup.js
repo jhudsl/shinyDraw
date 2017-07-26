@@ -23,7 +23,7 @@ export function ChartSetup(config) {
     height,
     xDomain,
     yDomain,
-    margin = {left: 50, right: 50, top: 30, bottom: 30},
+    margin,
     drawAxes = true,
   } = config;
 
@@ -31,10 +31,7 @@ export function ChartSetup(config) {
   const sel = d3.select(domTarget).html('');
 
   // append the svg to the div
-  const svg = sel
-    .append('svg')
-    .attr('width', config.width)
-    .attr('height', config.height);
+  const svg = sel.append('svg');
 
   // append a g element shifted up by margins
   const svgG = svg
@@ -53,34 +50,39 @@ export function ChartSetup(config) {
     yAxis = svgG.append('g').attr('class', 'y_axis');
   }
 
-  const resize = (newHeight, newWidth) => {
+  const resize = ({height: newHeight, width: newWidth}) => {
+    const chartWidth = newWidth - margin.left - margin.right;
+    const chartHeight = newHeight - margin.top - margin.bottom;
+
     // resize the svg
     svg.attr('width', newWidth).attr('height', newHeight);
 
     // set the scale ranges
-    xScale.range([0, newWidth]);
-    yScale.range([newHeight, 0]);
+    xScale.range([0, chartWidth]);
+    yScale.range([chartHeight, 0]);
 
     // if applicable redraw the axes
     if (drawAxes) {
       xAxis
         .attr(
           'transform',
-          `translate(0,${newHeight - margin.top - margin.bottom})`
+          `translate(0,${chartHeight})`
         )
         .call(d3.axisBottom(xScale));
 
       yAxis.call(d3.axisLeft(yScale));
     }
+
+    return {
+      svg: svgG,
+      xScale,
+      yScale,
+      width: chartWidth,
+      height: chartHeight,
+      resize,
+    };
   };
 
   // kick it off
-  resize(height, width);
-
-  return {
-    svg: svgG,
-    xScale,
-    yScale,
-    resize,
-  };
+  return resize({height, width});
 }

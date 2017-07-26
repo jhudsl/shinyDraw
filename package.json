@@ -4,7 +4,7 @@
   "description": "A simple js library for constructing a you draw it chart",
   "main": "src/main.js",
   "scripts": {
-    "test": "browserify -t [ babelify --presets [ es2015 ] ] src/*.test.js | tape-run",
+    "test": "browserify -t [ babelify --presets [ es2015 ] ] src/*.test.js | tape-run | tap-spec",
     "start": "watchify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone drawr -o demo/drawr.js -v --debug"
   },
   "dependencies": {
@@ -18,11 +18,14 @@
     "chai": "4.1.0",
     "eslint": "4.3.0",
     "eslint-config-google": "0.9.1",
-    "jsdom": "11.1.0",
+    "karma": "1.7.0",
+    "karma-browserify": "5.1.1",
+    "karma-chai": "0.1.0",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-mocha": "1.3.0",
     "mocha": "3.4.2",
-    "mocha-jsdom": "1.1.0",
     "prettier-eslint": "6.4.2",
-    "tape": "4.7.0",
+    "tap-spec": "4.1.1",
     "watchify": "^3.9.0"
   },
   "author": "Nick Strayer <nick.strayer@gmail.com> (http://nickstrayer.me)",

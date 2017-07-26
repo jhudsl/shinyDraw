@@ -1,7 +1,7 @@
 const {SimplifyData} = require('./SimplifyData');
 const test = require('tape');
 
-test('Simplify data simplifies', (t) => {
+test('SimplifyData()', (t) => {
   // append a div with id of viz for function to target
   const fakeData = [
     {horse: 93, pig: 40, chicken: 40},
