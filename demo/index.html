@@ -1,29 +1,14 @@
 <!DOCTYPE html>
-<meta charset='utf-8'>
-<script src='youDrawIt.js'></script>
-
-<div>
-  <h1> Predictr </h1>
-</div>
-<div id = "viz"></div>
-
-<style>
-  svg{
-  	overflow: visible;
-  }
-
-  body{
-    font-family: monospace;
-    margin: 0px;
-    overflow: hidden;
-  }
-
-  .axis{
-    opacity: .5;
-  }
-</style>
-
-<script>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <div id = "viz"></div>
+        <script src="drawr.js"></script>
+    </body>
+    <script>
 
 var data = [
   {"year": 2001, "debt": 31.4},
@@ -41,23 +26,12 @@ var data = [
   {"year": 2013, "debt": 72.6},
   {"year": 2014, "debt": 74.4},
   {"year": 2015, "debt": 73.6},
-]
+];
 
-const finishedDragging = (d) => console.log("user finished dragging, they have defined " + d.length + "datapoints")
-
-const params = {
-  data: data,
-  dom_target: "#viz",
-  on_done_drawing: finishedDragging,
-  x_key: "year",
-  y_key: "debt",
-  y_domain: [0,80],
-  raw_draw: true,
-  reveal_extent: 2001 //currently pins drawn line to this point but let's users line start one unit beyond. May need to be more flexible.
-}
-
-
-
-const ourChart = new youDrawIt(params);
+drawr({
+    domTarget: '#viz',
+    data,
+});
 
 </script>
+</html>

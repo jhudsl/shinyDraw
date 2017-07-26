@@ -1,26 +1,30 @@
 {
-  "name": "drawplot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "drawr",
+  "version": "0.0.2",
+  "description": "A simple js library for constructing a you draw it chart",
   "main": "src/main.js",
   "scripts": {
-    "start": "watchify src/main.js src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt -o demo/youDrawIt.js -v",
-    "RDev": "watchify src/main.js src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt -o /Users/nick/rpackages/shinysense/inst/js/libraries/youDrawIt.js -v",
-    "build": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt > dist/youDrawIt.js",
-    "buildMin": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone youDrawIt | uglifyjs -cm > dist/youDrawIt.min.js"
+    "test": "browserify -t [ babelify --presets [ es2015 ] ] src/*.test.js | tape-run",
+    "start": "watchify src/main.js -t [ babelify --presets [ es2015 ] ] --standalone drawr -o demo/drawr.js -v --debug"
   },
-  "author": "Nick Strayer <nick.strayer@gmail.com> (http://nickstrayer.me)",
-  "license": "MIT",
   "dependencies": {
     "d3": "^4.9.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^7.3.0",
     "browserify": "^14.4.0",
+    "chai": "4.1.0",
+    "eslint": "4.3.0",
+    "eslint-config-google": "0.9.1",
+    "jsdom": "11.1.0",
+    "mocha": "3.4.2",
+    "mocha-jsdom": "1.1.0",
+    "prettier-eslint": "6.4.2",
+    "tape": "4.7.0",
     "watchify": "^3.9.0"
   },
-  "browserify": {
-    "transform": [ "babelify" ]
-  }
+  "author": "Nick Strayer <nick.strayer@gmail.com> (http://nickstrayer.me)",
+  "license": "MIT"
 }
