@@ -37,7 +37,7 @@ test('ChartSetup()', (t) => {
     'yScale original range is correct'
   );
 
-  // resize chart
+  console.log('resizing chart');
   myChart.resize({width: 1000, height: 600});
   t.equal(+svg.attr('height'), 600, 'new svg height correct');
   t.equal(+svg.attr('width'), 1000, 'new svg width is correct');
