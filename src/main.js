@@ -2,12 +2,15 @@ const d3 = require('d3');
 const {ChartSetup} = require('./ChartSetup');
 const {SimplifyData} = require('./SimplifyData');
 const MakeDrawnData = require('./MakeDrawnData');
+const MakeDragger = require('./MakeDragger');
+const AddDrawnData = require('./AddDrawnData');
 
 /**
  * Creates a simple drawer d3 chart. 
  * @param {Object} config - Object containing info about your environment/ data.
  * @param {Object[]} config.data - data to be plotted: array of objects
  * @param {string} config.domTarget - name (with # prefix) of the div you're chart is going in
+ * @param {boolean} config.freeDraw - Are we just using this as a drawer and no reveal?
  * @param {number} [config.revealExtent = null] - Point at which we start keeping data x >= revealExtent.
  * @param {number} [config.height = 400] - height in pixels of viz
  * @param {number} [config.width = 400] - width in pixels of viz
@@ -18,12 +21,14 @@ function drawr(config) {
   const {
     domTarget,
     data: originalData,
-    revealExtent = null,
+    freeDraw = false,
     height: chartHeight = 400,
     width: chartWidth = 400,
     margin = {left: 50, right: 50, top: 50, bottom: 50},
     drawLineColor = 'steelblue',
   } = config;
+
+  let {revealExtent = null} = config;
 
   const data = SimplifyData(originalData, 'year', 'debt');
   const xDomain = d3.extent(data, (d) => d.x);
@@ -37,6 +42,13 @@ function drawr(config) {
     margin,
   });
 
+  // If we have a freedraw chart we need to make sure the reveal extent is beyond the min of the x axis
+  if (freeDraw) {
+    revealExtent = xDomain[0] - 1;
+  }
+
+  const lineGenerator = d3.area().x((d) => xScale(d.x)).y((d) => yScale(d.y));
+
   // set up environment for the drawn line to sit in.
   const userLine = svg
     .append('path')
@@ -45,7 +57,10 @@ function drawr(config) {
     .style('stroke-width', 3)
     .style('stroke-dasharray', '5 5');
 
-  const usersData = MakeDrawnData({data, revealExtent});
+  // Dont pin the first value to the existing y data unless the user has selected freedraw
+  const drawDataConfig = {data, revealExtent, pinStart: !freeDraw};
+
+  const userData = MakeDrawnData(drawDataConfig);
 
   // Make invisible rectangle over whole viz for the d3 drag behavior to watch
   const dragCanvas = svg
@@ -55,14 +70,43 @@ function drawr(config) {
     .attr('height', chartHeight)
     .attr('opacity', 0);
 
-    console.log('reveal extent pixel location', xScale(revealExtent))
-  // set up a clipping rectangle for the viz
-  const clipRect = svg
-    .append('clipPath')
-    .attr('id', `${domTarget}_clipper`) // need unique clip id or we get colisions between multiple drawrs.
-    // .append('rect')
-    //   .attr('width', xScale(revealExtent))
-    //   .attr('height', height);
+  // set up a clipping rectangle for the viz. Only needed if we're showing some data.
+  if (!freeDraw && revealExtent) {
+    const clipRect = svg
+      .append('clipPath')
+      .attr('id', `${domTarget.replace('#', '')}_clipper`) // need unique clip id or we get colisions between multiple drawrs.
+      .append('rect')
+      .attr('width', xScale(revealExtent))
+      .attr('height', chartHeight);
+
+    // set up a holder to draw the true line with that is clipped by our clip rectangle we just made
+    const dataLine = svg
+      .append('g')
+      .attr('class', 'data_line')
+      .attr('clip-path', `url(${domTarget}_clipper)`)
+      .append('path')
+      .attr('d', lineGenerator(data))
+      .style('stroke', 'black')
+      .style('stroke-width', 3)
+      .style('fill', 'none');
+  }
+
+  const onDrag = (xPos, yPos) => {
+    AddDrawnData({userData, xPos, yPos, freeDraw});
+    userLine.attr('d', lineGenerator.defined((d) => d.defined)(userData));
+  };
+
+  const onDragEnd = () => console.log('done dragging');
+
+  const dragger = MakeDragger({
+    xScale,
+    yScale,
+    revealExtent,
+    onDrag,
+    onDragEnd,
+  });
+
+  svg.call(dragger);
 }
 
 module.exports = drawr;

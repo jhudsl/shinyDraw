@@ -23,11 +23,11 @@ const data = [
 // set up div for viz with clip
 d3.select('body').append('div').attr('id', 'viz');
 
-test('drawr()', (t) => {
+test('drawr() on freedraw mode', (t) => {
   drawr({
     domTarget: '#viz',
     data,
-    revealExtent: 2008,
+    freeDraw: true,
     width: 500,
     height: 400,
   });
@@ -59,7 +59,8 @@ test('drawr()', (t) => {
 
   console.log('Clip rectangle stuff');
   const clipPath = svg.select('clipPath');
-  t.assert(!clipPath.empty(), 'A clip path is appended.');
-  t.assert(!svg.select('.data_line').empty(), 'Holder for true data line appended');
+  t.assert(clipPath.empty(), 'No clip path is appended.');
+  t.assert(svg.select('.data_line').empty(), 'No holder for true data line appended');
+
   t.end();
 });

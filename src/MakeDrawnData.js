@@ -7,7 +7,7 @@
  * @return {Object[]} A subset (but perhaps equal sized) array of data with a defined field added. 
  */
 function MakeDrawnData(config) {
-  const {data, revealExtent, pinStart = true} = config;
+  const {data, revealExtent, pinStart} = config;
   return data
     .map((d) => ({
       x: d.x,
