@@ -9,12 +9,12 @@
 function MakeDrawnData(config) {
   const {data, revealExtent, pinStart} = config;
   return data
-    .map((d) => ({
+    .filter((d) => d.x >= revealExtent)
+    .map((d, i) => ({
       x: d.x,
       y: d.y,
-      defined: pinStart? d.x == revealExtent: false,
-    }))
-    .filter((d) => d.x >= revealExtent);
+      defined: pinStart && i === 0? true: false,
+    }));
 }
 
 module.exports = MakeDrawnData;

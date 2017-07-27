@@ -20,13 +20,13 @@ const data = [
 ];
 
 const timeData = [
-  {x: '08/05/1993 12:20:00', y: 4},
-  {x: '09/15/1993 3:31:32', y: 0},
-  {x: '09/15/1995 3:31:32', y: 5},
-  {x: '09/15/1996 3:31:32', y: 6},
-  {x: '09/15/1997 3:31:32', y: 9},
-  {x: '09/15/1998 3:31:32', y: 15},
-  {x: '09/15/1999 3:31:32', y: 22},
+  {x: new Date('08/05/1993 12:20:00'), y: 4},
+  {x: new Date('09/15/1993 3:31:32'), y: 0},
+  {x: new Date('09/15/1995 3:31:32'), y: 5},
+  {x: new Date('09/15/1996 3:31:32'), y: 6},
+  {x: new Date('09/15/1997 3:31:32'), y: 9},
+  {x: new Date('09/15/1998 3:31:32'), y: 15},
+  {x: new Date('09/15/1999 3:31:32'), y: 22},
 ];
 
 test('test()', (t) => {
@@ -88,18 +88,34 @@ test('test()', (t) => {
 
   t.deepEqual(
     MakeDrawnData({
-      timeData,
+      data: timeData,
       revealExtent: new Date('5/15/1995'),
       pinStart: true,
     }),
     [
-      {x: '09/15/1995 3:31:32', y: 5, defined: true},
-      {x: '09/15/1996 3:31:32', y: 6, defined: false},
-      {x: '09/15/1997 3:31:32', y: 9, defined: false},
-      {x: '09/15/1998 3:31:32', y: 15, defined: false},
-      {x: '09/15/1999 3:31:32', y: 22, defined: false},
+      {x: new Date('09/15/1995 3:31:32'), y: 5, defined: true},
+      {x: new Date('09/15/1996 3:31:32'), y: 6, defined: false},
+      {x: new Date('09/15/1997 3:31:32'), y: 9, defined: false},
+      {x: new Date('09/15/1998 3:31:32'), y: 15, defined: false},
+      {x: new Date('09/15/1999 3:31:32'), y: 22, defined: false},
     ],
     'Pins first time value.'
+  );
+
+  t.deepEqual(
+    MakeDrawnData({
+      data: timeData,
+      revealExtent: new Date('5/15/1995'),
+      pinStart: false,
+    }),
+    [
+      {x: new Date('09/15/1995 3:31:32'), y: 5, defined: false},
+      {x: new Date('09/15/1996 3:31:32'), y: 6, defined: false},
+      {x: new Date('09/15/1997 3:31:32'), y: 9, defined: false},
+      {x: new Date('09/15/1998 3:31:32'), y: 15, defined: false},
+      {x: new Date('09/15/1999 3:31:32'), y: 22, defined: false},
+    ],
+    'Doesnt first time value if in freedraw.'
   );
   t.end();
 });

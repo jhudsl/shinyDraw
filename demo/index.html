@@ -13,33 +13,33 @@
     <script src="drawr.js"></script>
 </body>
 <script>
-    var data = [
-        { "year": 2001, "debt": 31.4 },
-        { "year": 2002, "debt": 32.6 },
-        { "year": 2003, "debt": 34.5 },
-        { "year": 2004, "debt": 35.5 },
-        { "year": 2005, "debt": 35.6 },
-        { "year": 2006, "debt": 35.3 },
-        { "year": 2007, "debt": 35.2 },
-        { "year": 2008, "debt": 39.3 },
-        { "year": 2009, "debt": 52.3 },
-        { "year": 2010, "debt": 60.9 },
-        { "year": 2011, "debt": 65.9 },
-        { "year": 2012, "debt": 70.4 },
-        { "year": 2013, "debt": 72.6 },
-        { "year": 2014, "debt": 74.4 },
-        { "year": 2015, "debt": 73.6 },
+    const data = [
+        { "year": '2001', "debt": 31.4 },
+        { "year": '2002', "debt": 32.6 },
+        { "year": '2003', "debt": 34.5 },
+        { "year": '2004', "debt": 35.5 },
+        { "year": '2005', "debt": 35.6 },
+        { "year": '2006', "debt": 35.3 },
+        { "year": '2007', "debt": 35.2 },
+        { "year": '2008', "debt": 39.3 },
+        { "year": '2009', "debt": 52.3 },
+        { "year": '2010', "debt": 60.9 },
+        { "year": '2011', "debt": 65.9 },
+        { "year": '2012', "debt": 70.4 },
+        { "year": '2013', "debt": 72.6 },
+        { "year": '2014', "debt": 74.4 },
+        { "year": '2015', "debt": 73.6 },
     ];
 
-var timeData = [
-    {time: '08/05/1993 12:20:00', pig: 4, chicken: 20},
-    {time: '09/15/1993 3:31:32', pig: 0, chicken: 90},
-    {time: '09/15/1995 3:31:32', pig: 5, chicken: 90},
-    {time: '09/15/1996 3:31:32', pig: 6, chicken: 90},
-    {time: '09/15/1997 3:31:32', pig: 9, chicken: 90},
-    {time: '09/15/1998 3:31:32', pig: 15, chicken: 90},
-    {time: '09/15/1999 3:31:32', pig: 22, chicken: 90},
-  ];
+    const timeData = [
+        { time: '08/05/1993 12:20:00', pig: 4, chicken: 20 },
+        { time: '09/15/1993 3:31:32', pig: 0, chicken: 90 },
+        { time: '09/15/1995 3:31:32', pig: 5, chicken: 90 },
+        { time: '09/15/1996 3:31:32', pig: 6, chicken: 90 },
+        { time: '09/15/1997 3:31:32', pig: 9, chicken: 90 },
+        { time: '09/15/1998 3:31:32', pig: 15, chicken: 90 },
+        { time: '09/15/1999 3:31:32', pig: 22, chicken: 90 },
+    ];
 
     const myDrawr = drawr({
         domTarget: '#viz',
@@ -61,7 +61,8 @@ var timeData = [
         data,
         xKey: "year",
         yKey: "debt",
-        revealExtent: 2009,
+        timeX: true,
+        revealExtent: "2009",
         freeDraw: false,
         width: 1000,
         height: 500,

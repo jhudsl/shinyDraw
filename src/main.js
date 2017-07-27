@@ -100,6 +100,7 @@ function drawr(config) {
       .attr('id', `${domTarget.replace('#', '')}_clipper`) // need unique clip id or we get colisions between multiple drawrs.
       .append('rect')
       .attr('width', xScale(revealExtent))
+      .attr('y', -margin.top)
       .attr('height', chartHeight);
 
     // set up a holder to draw the true line with that is clipped by our clip rectangle we just made
