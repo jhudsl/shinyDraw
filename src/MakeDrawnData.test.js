@@ -19,6 +19,16 @@ const data = [
   {x: 2015, y: 73.6},
 ];
 
+const timeData = [
+  {x: '08/05/1993 12:20:00', y: 4},
+  {x: '09/15/1993 3:31:32', y: 0},
+  {x: '09/15/1995 3:31:32', y: 5},
+  {x: '09/15/1996 3:31:32', y: 6},
+  {x: '09/15/1997 3:31:32', y: 9},
+  {x: '09/15/1998 3:31:32', y: 15},
+  {x: '09/15/1999 3:31:32', y: 22},
+];
+
 test('test()', (t) => {
   t.deepEqual(
     MakeDrawnData({data, revealExtent: 2007, pinStart: true}),
@@ -71,7 +81,25 @@ test('test()', (t) => {
       {x: 2014, y: 74.4, defined: false},
       {x: 2015, y: 73.6, defined: false},
     ],
-    'Cuts away earlier data and doesnt pin first value.'
+    'different freedraw input.'
+  );
+
+  console.log('Time x check');
+
+  t.deepEqual(
+    MakeDrawnData({
+      timeData,
+      revealExtent: new Date('5/15/1995'),
+      pinStart: true,
+    }),
+    [
+      {x: '09/15/1995 3:31:32', y: 5, defined: true},
+      {x: '09/15/1996 3:31:32', y: 6, defined: false},
+      {x: '09/15/1997 3:31:32', y: 9, defined: false},
+      {x: '09/15/1998 3:31:32', y: 15, defined: false},
+      {x: '09/15/1999 3:31:32', y: 22, defined: false},
+    ],
+    'Pins first time value.'
   );
   t.end();
 });
