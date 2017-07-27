@@ -1,44 +1,69 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Hello World!</title>
-    </head>
-    <body>
-        <div id = "viz" style = "height: 80%; width: 80%"></div>
-        <script src="drawr.js"></script>
-    </body>
-    <script>
 
-var data = [
-  {"year": 2001, "debt": 31.4},
-  {"year": 2002, "debt": 32.6},
-  {"year": 2003, "debt": 34.5},
-  {"year": 2004, "debt": 35.5},
-  {"year": 2005, "debt": 35.6},
-  {"year": 2006, "debt": 35.3},
-  {"year": 2007, "debt": 35.2},
-  {"year": 2008, "debt": 39.3},
-  {"year": 2009, "debt": 52.3},
-  {"year": 2010, "debt": 60.9},
-  {"year": 2011, "debt": 65.9},
-  {"year": 2012, "debt": 70.4},
-  {"year": 2013, "debt": 72.6},
-  {"year": 2014, "debt": 74.4},
-  {"year": 2015, "debt": 73.6},
-];
+<head>
+    <meta charset="UTF-8" />
+    <title>Drawr Tests</title>
+</head>
 
-const myDrawr = drawr({
-    domTarget: '#viz',
-    data,
-    revealExtent: 2005,
-    freeDraw: false,
-    width: 1000,
-    height: 500,
-    margin: {left: 50, right: 50, top: 80, bottom: 50}
-  });
+<body>
+    <div id="viz" style="height: 80%; width: 80%"></div>
+    <div id="viz2" style="height: 80%; width: 80%"></div>
+    <div id="viz3" style="height: 80%; width: 80%"></div>
+    <script src="drawr.js"></script>
+</body>
+<script>
+    var data = [
+        { "year": 2001, "debt": 31.4 },
+        { "year": 2002, "debt": 32.6 },
+        { "year": 2003, "debt": 34.5 },
+        { "year": 2004, "debt": 35.5 },
+        { "year": 2005, "debt": 35.6 },
+        { "year": 2006, "debt": 35.3 },
+        { "year": 2007, "debt": 35.2 },
+        { "year": 2008, "debt": 39.3 },
+        { "year": 2009, "debt": 52.3 },
+        { "year": 2010, "debt": 60.9 },
+        { "year": 2011, "debt": 65.9 },
+        { "year": 2012, "debt": 70.4 },
+        { "year": 2013, "debt": 72.6 },
+        { "year": 2014, "debt": 74.4 },
+        { "year": 2015, "debt": 73.6 },
+    ];
+
+    const myDrawr = drawr({
+        domTarget: '#viz',
+        data,
+        onDoneDrawing: (d) => console.log('viz1 done', d),
+        revealExtent: 2005,
+        freeDraw: false,
+        width: 1000,
+        height: 500,
+        margin: { left: 50, right: 50, top: 80, bottom: 50 }
+    });
+
+    const myDrawr2 = drawr({
+        domTarget: '#viz2',
+        data,
+        revealExtent: 2009,
+        freeDraw: false,
+        width: 1000,
+        height: 500,
+        margin: { left: 50, right: 50, top: 80, bottom: 50 }
+    });
+
+    const myDrawr3 = drawr({
+        domTarget: '#viz3',
+        data,
+        revealExtent: 2002,
+        freeDraw: false,
+        width: 1000,
+        height: 500,
+        margin: { left: 50, right: 50, top: 80, bottom: 50 }
+    });
 
 // window.setTimeout(() => myDrawr.resize(500,500), 4000)
 
 </script>
+
 </html>

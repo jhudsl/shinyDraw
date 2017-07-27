@@ -9,19 +9,20 @@ const AddDrawnData = require('./AddDrawnData');
  * Creates a simple drawer d3 chart. 
  * @param {Object} config - Object containing info about your environment/ data.
  * @param {Object[]} config.data - data to be plotted: array of objects
+ * @param {function} [config.onDoneDrawing = (drawn) => console.log(drawn)] - function called after user has finished drawing on chart. Is passed the draw data.
  * @param {string} config.domTarget - name (with # prefix) of the div you're chart is going in
  * @param {boolean} config.freeDraw - Are we just using this as a drawer and no reveal?
  * @param {number} [config.revealExtent = null] - Point at which we start keeping data x >= revealExtent.
  * @param {number} [config.height = 400] - height in pixels of viz
  * @param {number} [config.width = 400] - width in pixels of viz
  * @param {string} [drawLineColor = 'steelblue'] - valid css color for the user drawn line. 
- * @returns {function} a resize function that allows you to resize the whole viz. 
- * @param 
+ * @return {function} a resize function that allows you to resize the whole viz. 
  */
 function drawr(config) {
   const {
     domTarget,
     data: originalData,
+    onDoneDrawing = (drawn) => console.log(drawn),
     freeDraw = false,
     height: chartHeight = 400,
     width: chartWidth = 400,
@@ -129,7 +130,7 @@ function drawr(config) {
 
   const onDragEnd = () => {
     if (allDrawn) {
-      console.table(userData);
+      onDoneDrawing(userData);
     }
   };
 
