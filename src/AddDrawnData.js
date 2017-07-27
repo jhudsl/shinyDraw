@@ -8,6 +8,7 @@
  */
 function AddDrawnData(config) {
   const {userData, xPos, yPos, freeDraw} = config;
+  console.log(config);
   // make array of distance from drag xposition to x position in data
   // then find the index in that array that is the min. This is the closest point in our data.
   const closestIndex = userData
@@ -22,8 +23,8 @@ function AddDrawnData(config) {
   const pinnedValue = !freeDraw && closestIndex === 0;
   if (!pinnedValue) {
     userData[closestIndex].y = yPos;
-    userData[closestIndex].defined = true;
   }
+  userData[closestIndex].defined = true;
 }
 
 module.exports = AddDrawnData;

@@ -31,20 +31,36 @@
         { "year": 2015, "debt": 73.6 },
     ];
 
+var timeData = [
+    {time: '08/05/1993 12:20:00', pig: 4, chicken: 20},
+    {time: '09/15/1993 3:31:32', pig: 0, chicken: 90},
+    {time: '09/15/1995 3:31:32', pig: 5, chicken: 90},
+    {time: '09/15/1996 3:31:32', pig: 6, chicken: 90},
+    {time: '09/15/1997 3:31:32', pig: 9, chicken: 90},
+    {time: '09/15/1998 3:31:32', pig: 15, chicken: 90},
+    {time: '09/15/1999 3:31:32', pig: 22, chicken: 90},
+  ];
+
     const myDrawr = drawr({
         domTarget: '#viz',
-        data,
+        data: timeData,
+        xKey: "time",
+        yKey: "pig",
+        timeX: true,
         onDoneDrawing: (d) => console.log('viz1 done', d),
-        revealExtent: 2005,
+        revealExtent: timeData[2].time,
         freeDraw: false,
         width: 1000,
         height: 500,
-        margin: { left: 50, right: 50, top: 80, bottom: 50 }
+        margin: { left: 50, right: 50, top: 80, bottom: 50 },
+        drawLineColor: 'orangered'
     });
 
     const myDrawr2 = drawr({
         domTarget: '#viz2',
         data,
+        xKey: "year",
+        yKey: "debt",
         revealExtent: 2009,
         freeDraw: false,
         width: 1000,
@@ -52,15 +68,15 @@
         margin: { left: 50, right: 50, top: 80, bottom: 50 }
     });
 
-    const myDrawr3 = drawr({
-        domTarget: '#viz3',
-        data,
-        revealExtent: 2002,
-        freeDraw: false,
-        width: 1000,
-        height: 500,
-        margin: { left: 50, right: 50, top: 80, bottom: 50 }
-    });
+    // const myDrawr3 = drawr({
+    //     domTarget: '#viz3',
+    //     data,
+    //     revealExtent: 2002,
+    //     freeDraw: false,
+    //     width: 1000,
+    //     height: 500,
+    //     margin: { left: 50, right: 50, top: 80, bottom: 50 }
+    // });
 
 // window.setTimeout(() => myDrawr.resize(500,500), 4000)
 

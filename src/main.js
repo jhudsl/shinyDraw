@@ -9,6 +9,9 @@ const AddDrawnData = require('./AddDrawnData');
  * Creates a simple drawer d3 chart. 
  * @param {Object} config - Object containing info about your environment/ data.
  * @param {Object[]} config.data - data to be plotted: array of objects
+ * @param {string} config.xKey - name of the x column in data objects
+ * @param {string} config.yKey - name of the y column in data objects
+ * @param {boolean} [config.timeX = false] - Is the x-axis of the data in time format? If so use MM-dd-YYYY HH:MM:SS please!
  * @param {function} [config.onDoneDrawing = (drawn) => console.log(drawn)] - function called after user has finished drawing on chart. Is passed the draw data.
  * @param {string} config.domTarget - name (with # prefix) of the div you're chart is going in
  * @param {boolean} config.freeDraw - Are we just using this as a drawer and no reveal?
@@ -22,6 +25,9 @@ function drawr(config) {
   const {
     domTarget,
     data: originalData,
+    xKey = 'x',
+    yKey = 'y',
+    timeX = false,
     onDoneDrawing = (drawn) => console.log(drawn),
     freeDraw = false,
     height: chartHeight = 400,
@@ -36,21 +42,33 @@ function drawr(config) {
   let dataLine;
   let allDrawn; // Boolean recording if we've drawn all the values already. Used to trigger reveal animation.
 
-  const data = SimplifyData(originalData, 'year', 'debt');
+  const data = SimplifyData({
+    data: originalData,
+    xKey,
+    yKey,
+    timeX,
+  });
+
   const xDomain = d3.extent(data, (d) => d.x);
   const yDomain = d3.extent(data, (d) => d.y);
+
   const {svg, xScale, yScale, resize: chartResize} = ChartSetup({
     domTarget,
     width: chartWidth,
     height: chartHeight,
     xDomain,
     yDomain,
+    timeX,
     margin,
   });
 
-  // If we have a freedraw chart we need to make sure the reveal extent is beyond the min of the x axis
+  // If we're doing a freedraw we need to set the clipping just before our data starts.
   if (freeDraw) {
-    revealExtent = xDomain[0] - 1;
+    revealExtent = xDomain[0] - 1e-6;
+  }
+  // If our chart has a time axes we need to convert the reveal extent do a date object too.
+  if (timeX) {
+    revealExtent = new Date(revealExtent);
   }
 
   const lineGenerator = (xScale, yScale) =>
@@ -119,7 +137,6 @@ function drawr(config) {
     // Update the drawn line with the latest position.
     AddDrawnData({userData, xPos, yPos, freeDraw});
     updateUserLine();
-
     // if we've drawn for all the hidden datapoints, reveal them.
     allDrawn = d3.mean(userData, (d) => d.defined) === 1;
 

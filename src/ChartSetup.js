@@ -13,6 +13,7 @@ const d3 = require('d3');
  * @param {number} config.margin.right - right padding.
  * @param {number} config.margin.top - top padding.
  * @param {number} config.margin.bottom - bottom padding.
+ * @param {boolean} config.timeX - do we have an x axis of time?
  * @param {boolean} config.drawAxes - do we desire to append axes for the chart?
  * @return {Object} returns scales for the x and y values and a resize option that updates the svg size and recalculates the scales.
  */
@@ -24,6 +25,7 @@ export function ChartSetup(config) {
     xDomain,
     yDomain,
     margin,
+    timeX,
     drawAxes = true,
   } = config;
 
@@ -39,7 +41,8 @@ export function ChartSetup(config) {
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
   // initialize the scales to the supplied domains
-  const xScale = d3.scaleLinear().domain(xDomain);
+  const xScale = timeX? d3.scaleTime(): d3.scaleLinear();
+  xScale.domain(xDomain);
   const yScale = d3.scaleLinear().domain(yDomain);
 
   // set up axes if we have them.
