@@ -20,7 +20,6 @@ function AddDrawnData(config) {
 
   // update user data info. The functional programmer in me is weeping at this, but it's way faster.
   const pinnedValue = !freeDraw && closestIndex === 0;
-  console.log(`closest index is ${closestIndex}. We think this is a ${pinnedValue? "pinned": "free"} value`);
   if (!pinnedValue) {
     userData[closestIndex].y = yPos;
     userData[closestIndex].defined = true;

@@ -30,6 +30,9 @@ function drawr(config) {
 
   let {revealExtent = null} = config;
 
+  let clipRect; // Define the clip rectangle holder so it isn't hidden in the if freeDraw scope.
+  let allDrawn; // Boolean recording if we've drawn all the values already. Used to trigger reveal animation.
+
   const data = SimplifyData(originalData, 'year', 'debt');
   const xDomain = d3.extent(data, (d) => d.x);
   const yDomain = d3.extent(data, (d) => d.y);
@@ -72,7 +75,7 @@ function drawr(config) {
 
   // set up a clipping rectangle for the viz. Only needed if we're showing some data.
   if (!freeDraw && revealExtent) {
-    const clipRect = svg
+    clipRect = svg
       .append('clipPath')
       .attr('id', `${domTarget.replace('#', '')}_clipper`) // need unique clip id or we get colisions between multiple drawrs.
       .append('rect')
@@ -92,11 +95,23 @@ function drawr(config) {
   }
 
   const onDrag = (xPos, yPos) => {
+    // Update the drawn line with the latest position.
     AddDrawnData({userData, xPos, yPos, freeDraw});
     userLine.attr('d', lineGenerator.defined((d) => d.defined)(userData));
+
+    // if we've drawn for all the hidden datapoints, reveal them.
+    allDrawn = d3.mean(userData, (d) => d.defined) === 1;
+
+    if (allDrawn && !freeDraw) {
+      clipRect.transition().duration(1000).attr('width', xScale(xDomain[1]));
+    }
   };
 
-  const onDragEnd = () => console.log('done dragging');
+  const onDragEnd = () => {
+    if (allDrawn) {
+      console.table(userData);
+    }
+  };
 
   const dragger = MakeDragger({
     xScale,
