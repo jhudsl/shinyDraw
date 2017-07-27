@@ -101,7 +101,7 @@ function drawr(config) {
       lineGenerator(xScale, yScale).defined((d) => d.defined)(userData)
     );
 
-  const resizeViz = (newWidth, newHeight) => {
+  const resizeViz = ({width: newWidth, height: newHeight}) => {
     // resize base chart.
     chartResize({width: newWidth, height: newHeight});
 

@@ -63,6 +63,9 @@ test('drawr()', (t) => {
   t.assert(!svg.select('.data_line').empty(), 'Holder for true data line appended');
 
   console.log('Resizing');
+  myDrawr.resize({width: 500, height: 300});
+  t.equal(+svg.attr('height'), 300, 'Svg is correct height');
+  t.equal(+svg.attr('width'), 500, 'Svg is correct width');
 
   t.end();
 });

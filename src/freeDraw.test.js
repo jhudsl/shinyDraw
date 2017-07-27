@@ -24,7 +24,7 @@ const data = [
 d3.select('body').append('div').attr('id', 'viz');
 
 test('drawr() on freedraw mode', (t) => {
-  drawr({
+  const myDrawr = drawr({
     domTarget: '#viz',
     data,
     freeDraw: true,
@@ -61,6 +61,12 @@ test('drawr() on freedraw mode', (t) => {
   const clipPath = svg.select('clipPath');
   t.assert(clipPath.empty(), 'No clip path is appended.');
   t.assert(svg.select('.data_line').empty(), 'No holder for true data line appended');
+
+  console.log('Resizing');
+  myDrawr.resize({width: 500, height: 300});
+  t.equal(+svg.attr('height'), 300, 'Svg is correct height');
+  t.equal(+svg.attr('width'), 500, 'Svg is correct width');
+
 
   t.end();
 });
