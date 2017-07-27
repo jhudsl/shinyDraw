@@ -15,6 +15,7 @@ const AddDrawnData = require('./AddDrawnData');
  * @param {number} [config.height = 400] - height in pixels of viz
  * @param {number} [config.width = 400] - width in pixels of viz
  * @param {string} [drawLineColor = 'steelblue'] - valid css color for the user drawn line. 
+ * @returns {function} a resize function that allows you to resize the whole viz. 
  * @param 
  */
 function drawr(config) {
@@ -31,12 +32,13 @@ function drawr(config) {
   let {revealExtent = null} = config;
 
   let clipRect; // Define the clip rectangle holder so it isn't hidden in the if freeDraw scope.
+  let dataLine;
   let allDrawn; // Boolean recording if we've drawn all the values already. Used to trigger reveal animation.
 
   const data = SimplifyData(originalData, 'year', 'debt');
   const xDomain = d3.extent(data, (d) => d.x);
   const yDomain = d3.extent(data, (d) => d.y);
-  const {svg, xScale, yScale, resize, width, height} = ChartSetup({
+  const {svg, xScale, yScale, resize: chartResize} = ChartSetup({
     domTarget,
     width: chartWidth,
     height: chartHeight,
@@ -50,7 +52,8 @@ function drawr(config) {
     revealExtent = xDomain[0] - 1;
   }
 
-  const lineGenerator = d3.area().x((d) => xScale(d.x)).y((d) => yScale(d.y));
+  const lineGenerator = (xScale, yScale) =>
+    d3.area().x((d) => xScale(d.x)).y((d) => yScale(d.y));
 
   // set up environment for the drawn line to sit in.
   const userLine = svg
@@ -61,9 +64,7 @@ function drawr(config) {
     .style('stroke-dasharray', '5 5');
 
   // Dont pin the first value to the existing y data unless the user has selected freedraw
-  const drawDataConfig = {data, revealExtent, pinStart: !freeDraw};
-
-  const userData = MakeDrawnData(drawDataConfig);
+  const userData = MakeDrawnData({data, revealExtent, pinStart: !freeDraw});
 
   // Make invisible rectangle over whole viz for the d3 drag behavior to watch
   const dragCanvas = svg
@@ -83,21 +84,40 @@ function drawr(config) {
       .attr('height', chartHeight);
 
     // set up a holder to draw the true line with that is clipped by our clip rectangle we just made
-    const dataLine = svg
+    dataLine = svg
       .append('g')
       .attr('class', 'data_line')
       .attr('clip-path', `url(${domTarget}_clipper)`)
       .append('path')
-      .attr('d', lineGenerator(data))
+      .attr('d', lineGenerator(xScale, yScale)(data))
       .style('stroke', 'black')
       .style('stroke-width', 3)
       .style('fill', 'none');
   }
 
+  const updateUserLine = () =>
+    userLine.attr(
+      'd',
+      lineGenerator(xScale, yScale).defined((d) => d.defined)(userData)
+    );
+
+  const resizeViz = (newWidth, newHeight) => {
+    // resize base chart.
+    chartResize({width: newWidth, height: newHeight});
+
+    // resize the dragging canvas and lines.
+    if (!freeDraw && revealExtent) {
+      clipRect.attr('width', xScale(revealExtent)).attr('height', newHeight);
+      dataLine.attr('d', lineGenerator(xScale, yScale)(data));
+    }
+    dragCanvas.attr('width', newWidth).attr('height', newHeight);
+    updateUserLine();
+  };
+
   const onDrag = (xPos, yPos) => {
     // Update the drawn line with the latest position.
     AddDrawnData({userData, xPos, yPos, freeDraw});
-    userLine.attr('d', lineGenerator.defined((d) => d.defined)(userData));
+    updateUserLine();
 
     // if we've drawn for all the hidden datapoints, reveal them.
     allDrawn = d3.mean(userData, (d) => d.defined) === 1;
@@ -122,6 +142,8 @@ function drawr(config) {
   });
 
   svg.call(dragger);
+
+  return {resize: resizeViz};
 }
 
 module.exports = drawr;

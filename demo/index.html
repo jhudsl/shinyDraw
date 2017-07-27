@@ -28,14 +28,17 @@ var data = [
   {"year": 2015, "debt": 73.6},
 ];
 
-drawr({
+const myDrawr = drawr({
     domTarget: '#viz',
     data,
     revealExtent: 2005,
-    freeDraw: true,
+    freeDraw: false,
     width: 1000,
     height: 500,
+    margin: {left: 50, right: 50, top: 80, bottom: 50}
   });
+
+window.setTimeout(() => myDrawr.resize(500,500), 4000)
 
 </script>
 </html>
