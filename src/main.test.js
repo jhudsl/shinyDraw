@@ -24,7 +24,7 @@ const data = [
 d3.select('body').append('div').attr('id', 'viz');
 
 test('drawr()', (t) => {
-  drawr({
+  const myDrawr = drawr({
     domTarget: '#viz',
     data,
     revealExtent: 2008,
@@ -61,5 +61,8 @@ test('drawr()', (t) => {
   const clipPath = svg.select('clipPath');
   t.assert(!clipPath.empty(), 'A clip path is appended.');
   t.assert(!svg.select('.data_line').empty(), 'Holder for true data line appended');
+
+  console.log('Resizing');
+
   t.end();
 });
